@@ -1,0 +1,9 @@
+# 憑證 / 金鑰，絕不入 repo
+.env
+*.env
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
