@@ -59,3 +59,19 @@ def build_second_update(open_record, weight, now_iso):
         "second_weigh_at": now_iso,
         "status": STATUS_DONE,
     }
+
+
+def build_print_payload(record, direction):
+    """組三聯磅單列印 payload（對齊 Fast Report SR_ 欄位）。"""
+    return {
+        "company": "薪榮環保股份有限公司",
+        "SR_Sn": record.get("ticket_no"),
+        "SR_Tn": record.get("plate"),
+        "SR_Date": record.get("second_weigh_at") or record.get("first_weigh_at"),
+        "SR_User": record.get("weigh_operator"),
+        "SR_Direction": direction,
+        "SR_Material": record.get("material_name") or "",
+        "SR_GwTon": record.get("gross_weight"),
+        "SR_TwTon": record.get("tare_weight"),
+        "SR_NwTon": record.get("net_weight"),
+    }
