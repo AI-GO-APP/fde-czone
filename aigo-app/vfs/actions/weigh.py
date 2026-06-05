@@ -75,3 +75,67 @@ def build_print_payload(record, direction):
         "SR_TwTon": record.get("tare_weight"),
         "SR_NwTon": record.get("net_weight"),
     }
+
+
+def _today_seq(ctx, date_str):
+    rows = ctx.db.query_object(WEIGHING_TABLE, limit=500)
+    return sum(1 for r in rows if str(r.get("ticket_no", "")).startswith(date_str)) + 1
+
+
+def _find_open(ctx, plate):
+    rows = ctx.db.query_object(WEIGHING_TABLE, limit=500)
+    opens = [r for r in rows if r.get("plate") == plate and r.get("status") == STATUS_OPEN]
+    opens.sort(key=lambda r: r.get("first_weigh_at", ""))
+    return opens[0] if opens else None
+
+
+def _lookup_vehicle(ctx, plate):
+    for r in ctx.db.query_object(VEHICLE_TABLE, limit=500):
+        if r.get("plate") == plate:
+            return r
+    return None
+
+
+def execute(ctx):
+    p = ctx.params
+    plate = p.get("plate")
+    weight = p.get("weight")
+    if not plate or weight is None:
+        ctx.response.error("缺少 plate 或 weight")
+        return
+
+    now = p.get("now") or datetime.utcnow().isoformat()
+    open_rec = _find_open(ctx, plate)
+
+    if decide_event(open_rec) == "first":
+        veh = _lookup_vehicle(ctx, plate)
+        customer_id = veh.get("default_customer_id") if veh else None
+        date_str = now[:10].replace("-", "")
+        ticket_no = make_ticket_no(date_str, _today_seq(ctx, date_str))
+        rec = build_first_record(
+            ticket_no, plate, customer_id, weight, now,
+            p.get("plate_source", "manual"), p.get("plate_confidence"),
+            p.get("weight_source", "manual"), p.get("weigh_operator", ""),
+            p.get("image_ref"),
+        )
+        ctx.db.insert(WEIGHING_TABLE, rec)
+        ctx.response.json({
+            "ticket_no": ticket_no, "event": "first", "plate": plate,
+            "customer_id": customer_id, "gross_weight": rec["gross_weight"],
+            "tare_weight": None, "net_weight": None,
+            "manual_only": bool(veh.get("manual_only")) if veh else False,
+            "print_payload": build_print_payload(rec, "進"),
+            "needs_manual": [] if customer_id else ["customer"],
+        })
+    else:
+        upd = build_second_update(open_rec, weight, now)
+        ctx.db.update(WEIGHING_TABLE, open_rec["id"], upd)
+        merged = {**open_rec, **upd}
+        ctx.response.json({
+            "ticket_no": open_rec.get("ticket_no"), "event": "second",
+            "plate": plate, "customer_id": open_rec.get("customer_id"),
+            "gross_weight": open_rec.get("gross_weight"),
+            "tare_weight": upd["tare_weight"], "net_weight": upd["net_weight"],
+            "print_payload": build_print_payload(merged, "出"),
+            "needs_manual": ["material"],
+        })
