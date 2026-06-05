@@ -14,7 +14,7 @@ def execute(ctx):
         ctx.response.json({"plate": "MOCK-0000", "confidence": 0.0, "mock": True})
         return
 
-    # 真呼叫（HTTP 細節於 Spike 用真實金鑰+測試圖驗證並校正）
+    # 真呼叫（已於 2026-06-05 用 live action + 測試圖驗證：base64 放 upload 欄位、regions=tw 可辨識台灣車牌）
     import httpx
     resp = httpx.post(
         ALPR_URL,
