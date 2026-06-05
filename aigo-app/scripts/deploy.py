@@ -51,8 +51,11 @@ def ensure_references(h, app_id):
 
 def read_vfs(vfs_dir):
     vfs = {}
-    for root, _, files in os.walk(vfs_dir):
+    for root, dirs, files in os.walk(vfs_dir):
+        dirs[:] = [d for d in dirs if d != "__pycache__"]  # 不上傳 Python 快取
         for fname in files:
+            if fname.endswith(".pyc"):
+                continue
             full = os.path.join(root, fname)
             rel = os.path.relpath(full, vfs_dir).replace(os.sep, "/")
             with open(full, "r", encoding="utf-8") as f:
@@ -72,19 +75,21 @@ def main():
     print(f"  上傳: {s}")
     if s != 200:
         sys.exit(f"❌ 上傳失敗：{b}")
-    print("[3.5/4] 編譯...")
+    # 前端 compile/publish 為 best-effort：Action 不需發布即可執行（見 PLATFORM_NOTES.md）。
+    # 全新 app 尚無已發布版時 compile 會 404，屬正常，僅警告不中斷。
+    print("[3.5/4] 編譯前端（best-effort）...")
     s, b = _req("GET", f"{API_BASE}/builder/apps/{app_id}", h)
     slug = b.get("slug", app_id)
     s2, r = _req("POST", f"{API_BASE}/compile/compile/{slug}", h, {}, timeout=60)
-    if not r.get("success"):
-        sys.exit(f"❌ 編譯失敗：{r.get('error')}")
-    print("  編譯：成功")
-    print("[4/4] 發布...")
-    s, b = _req("POST", f"{API_BASE}/builder/apps/{app_id}/publish", h, {"published_assets": {}})
-    print(f"  發布: {s}")
-    if s not in (200, 201):
-        sys.exit(f"❌ 發布失敗：{b}")
-    print("✅ 部署完成")
+    if isinstance(r, dict) and r.get("success"):
+        print("  編譯：成功")
+        print("[4/4] 發布前端...")
+        s, b = _req("POST", f"{API_BASE}/builder/apps/{app_id}/publish", h, {"published_assets": {}})
+        print(f"  發布: {s}")
+    else:
+        detail = r.get("detail") or r.get("error") if isinstance(r, dict) else r
+        print(f"  ⚠️ 跳過前端 compile/publish（{detail}）—Action 已上傳可直接執行")
+    print("✅ 部署完成（Action 已就緒）")
 
 
 if __name__ == "__main__":
