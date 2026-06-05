@@ -10,4 +10,4 @@ def test_returns_mock_when_no_alpr_key():
 def test_errors_when_no_image():
     ctx = FakeCtx({}, secrets={})
     recognize_plate.execute(ctx)
-    assert ctx.response.err is not None
+    assert ctx.response.body["error"]

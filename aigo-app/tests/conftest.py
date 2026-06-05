@@ -14,28 +14,28 @@ class FakeResponse:
 
 
 class FakeDB:
-    """模擬 ctx.db：x_ 表用 query_object，insert 自動配 id，update 就地改。"""
+    """模擬 ctx.db：Custom Object(x_) 用 query_object 讀、insert_object/update_object 寫。"""
     def __init__(self, weighing=None, vehicle=None):
         self._w = [dict(r) for r in (weighing or [])]
         self._v = [dict(r) for r in (vehicle or [])]
         self.inserted = []
         self.updated = []
-    def query_object(self, table, limit=500, **kw):
-        if table == "x_czone_weighing":
+    def query_object(self, slug, limit=500, **kw):
+        if slug == "x_czone_weighing":
             return [dict(r) for r in self._w]
-        if table == "x_czone_vehicle":
+        if slug == "x_czone_vehicle":
             return [dict(r) for r in self._v]
         return []
-    def insert(self, table, data):
+    def insert_object(self, slug, data):
         row = {**data, "id": f"new-{len(self.inserted) + 1}"}
-        self.inserted.append((table, row))
-        if table == "x_czone_weighing":
+        self.inserted.append((slug, row))
+        if slug == "x_czone_weighing":
             self._w.append(row)
         return row
-    def update(self, table, row_id, data):
-        self.updated.append((table, row_id, data))
+    def update_object(self, slug, record_id, data):
+        self.updated.append((slug, record_id, data))
         for r in self._w:
-            if r.get("id") == row_id:
+            if r.get("id") == record_id:
                 r.update(data)
         return {"success": True}
 

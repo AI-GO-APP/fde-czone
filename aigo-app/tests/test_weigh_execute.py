@@ -29,7 +29,7 @@ def test_second_weigh_updates_matching_open_record():
 def test_missing_weight_returns_error():
     ctx = FakeCtx({"plate": "ABC-1234", "weigh_operator": "王小明"})
     weigh.execute(ctx)
-    assert ctx.response.err is not None
+    assert ctx.response.body["error"]
 
 def test_first_weigh_without_known_vehicle_flags_manual_customer():
     db = FakeDB(weighing=[], vehicle=[])

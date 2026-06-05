@@ -10,4 +10,4 @@ def test_returns_mock_when_ocr_disabled():
 def test_errors_when_no_image():
     ctx = FakeCtx({}, secrets={})
     read_weight.execute(ctx)
-    assert ctx.response.err is not None
+    assert ctx.response.body["error"]

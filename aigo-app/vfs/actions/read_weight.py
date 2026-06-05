@@ -5,7 +5,7 @@
 def execute(ctx):
     image = ctx.params.get("image")
     if not image:
-        ctx.response.error("缺少 image")
+        ctx.response.json({"error": "缺少 image"})
         return
 
     if not ctx.secrets.get("ocr_enabled"):

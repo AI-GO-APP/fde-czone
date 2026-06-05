@@ -101,7 +101,7 @@ def execute(ctx):
     plate = p.get("plate")
     weight = p.get("weight")
     if not plate or weight is None:
-        ctx.response.error("缺少 plate 或 weight")
+        ctx.response.json({"error": "缺少 plate 或 weight"})
         return
 
     now = p.get("now") or datetime.utcnow().isoformat()
@@ -118,7 +118,7 @@ def execute(ctx):
             p.get("weight_source", "manual"), p.get("weigh_operator", ""),
             p.get("image_ref"),
         )
-        ctx.db.insert(WEIGHING_TABLE, rec)
+        ctx.db.insert_object(slug=WEIGHING_TABLE, data=rec)
         ctx.response.json({
             "ticket_no": ticket_no, "event": "first", "plate": plate,
             "customer_id": customer_id, "gross_weight": rec["gross_weight"],
@@ -129,7 +129,7 @@ def execute(ctx):
         })
     else:
         upd = build_second_update(open_rec, weight, now)
-        ctx.db.update(WEIGHING_TABLE, open_rec["id"], upd)
+        ctx.db.update_object(slug=WEIGHING_TABLE, record_id=open_rec["id"], data=upd)
         merged = {**open_rec, **upd}
         ctx.response.json({
             "ticket_no": open_rec.get("ticket_no"), "event": "second",

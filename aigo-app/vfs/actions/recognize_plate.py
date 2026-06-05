@@ -6,7 +6,7 @@ ALPR_URL = "https://api.platerecognizer.com/v1/plate-reader/"
 def execute(ctx):
     image = ctx.params.get("image")
     if not image:
-        ctx.response.error("缺少 image")
+        ctx.response.json({"error": "缺少 image"})
         return
 
     key = ctx.secrets.get("alpr_key")
