@@ -1,0 +1,7 @@
+{
+  "actions": [
+    {"name": "recognize_plate", "file": "recognize_plate.py", "description": "車牌辨識"},
+    {"name": "read_weight", "file": "read_weight.py", "description": "磅數 OCR"},
+    {"name": "weigh", "file": "weigh.py", "description": "過磅配對與寫表"}
+  ]
+}
