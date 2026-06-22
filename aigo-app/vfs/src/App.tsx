@@ -35,40 +35,38 @@ export default function App() {
     finally { setBusy(false); }
   }
 
-  const cell: any = { border: "1px solid #ccc", padding: 6 };
-  const inp: any = { width: "100%" };
   return (
-    <div style={{ fontFamily: '"微軟正黑體", "Microsoft JhengHei", sans-serif', padding: 24, maxWidth: 860, margin: "0 auto" }}>
-      <h2>薪榮地磅 — 驗證輸入</h2>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
-        <label>車號<input value={plate} onChange={e => setPlate(e.target.value)} style={inp} /></label>
-        <label>重量(公噸)<input value={weight} onChange={e => setWeight(e.target.value)} style={inp} /></label>
-        <label>會磅員<input value={operator} onChange={e => setOperator(e.target.value)} style={inp} /></label>
-        <label>客戶名稱<input value={customer} onChange={e => setCustomer(e.target.value)} style={inp} /></label>
-        <label>料種<input value={material} onChange={e => setMaterial(e.target.value)} style={inp} /></label>
+    <div className="wp-root">
+      <h2 className="wp-title">薪榮地磅 — 驗證輸入</h2>
+      <div className="wp-grid">
+        <label className="wp-field">車號<input value={plate} onChange={e => setPlate(e.target.value)} /></label>
+        <label className="wp-field">重量(公噸)<input value={weight} onChange={e => setWeight(e.target.value)} /></label>
+        <label className="wp-field">會磅員<input value={operator} onChange={e => setOperator(e.target.value)} /></label>
+        <label className="wp-field">客戶名稱<input value={customer} onChange={e => setCustomer(e.target.value)} /></label>
+        <label className="wp-field">料種<input value={material} onChange={e => setMaterial(e.target.value)} /></label>
       </div>
-      <div style={{ marginTop: 12 }}>
-        <button onClick={submit} disabled={busy} style={{ padding: "8px 18px" }}>{busy ? "處理中…" : "過磅"}</button>
-        <span style={{ marginLeft: 12 }}>{msg}</span>
+      <div className="wp-actions">
+        <button onClick={submit} disabled={busy} className="wp-btn">{busy ? "處理中…" : "過磅"}</button>
+        <span className="wp-msg">{msg}</span>
       </div>
       {payload && (
-        <pre style={{ background: "#f4f6f8", padding: 12, marginTop: 12, whiteSpace: "pre-wrap" }}>
+        <pre className="wp-payload">
           {JSON.stringify(payload, null, 2)}
         </pre>
       )}
-      <h3 style={{ marginTop: 24 }}>最近紀錄</h3>
-      <table style={{ borderCollapse: "collapse", width: "100%" }}>
+      <h3 className="wp-subtitle">最近紀錄</h3>
+      <table className="wp-table">
         <thead><tr>
-          <th style={cell}>單號</th><th style={cell}>車號</th><th style={cell}>客戶</th><th style={cell}>料種</th>
-          <th style={cell}>會磅員</th><th style={cell}>狀態</th><th style={cell}>毛重</th><th style={cell}>淨重</th><th style={cell}>時間</th>
+          <th>單號</th><th>車號</th><th>客戶</th><th>料種</th>
+          <th>會磅員</th><th>狀態</th><th>毛重</th><th>淨重</th><th>時間</th>
         </tr></thead>
         <tbody>
           {rows.map(r => (
             <tr key={r.id}>
-              <td style={cell}>{r.ticket_no}</td><td style={cell}>{r.plate}</td>
-              <td style={cell}>{r.customer_name}</td><td style={cell}>{r.material_name}</td>
-              <td style={cell}>{r.weigh_operator}</td><td style={cell}>{r.status}</td>
-              <td style={cell}>{r.gross_weight ?? ""}</td><td style={cell}>{r.net_weight ?? ""}</td><td style={cell}>{r.at}</td>
+              <td>{r.ticket_no}</td><td>{r.plate}</td>
+              <td>{r.customer_name}</td><td>{r.material_name}</td>
+              <td>{r.weigh_operator}</td><td>{r.status}</td>
+              <td>{r.gross_weight ?? ""}</td><td>{r.net_weight ?? ""}</td><td>{r.at}</td>
             </tr>
           ))}
         </tbody>

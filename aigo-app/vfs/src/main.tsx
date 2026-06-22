@@ -1,6 +1,7 @@
 // vfs/src/main.tsx
 import { createRoot } from "react-dom/client";
 import App from "./App";
+import "./App.css";
 import { resolveMountPoint } from "./mount";
 
 // 掛載點由平台 runtime 以 window.__CUSTOM_APP_ROOT__ 注入, 本機 dev 退回 #root。
