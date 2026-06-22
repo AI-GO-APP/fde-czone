@@ -24,13 +24,15 @@ def decide_event(open_record):
 
 def build_first_record(ticket_no, plate, customer_id, weight, now_iso,
                        plate_source, plate_confidence, weight_source,
-                       weigh_operator, image_ref):
+                       weigh_operator, image_ref, customer_name="", material_name=""):
     """一磅：建立新過磅紀錄的完整欄位 dict。"""
     return {
         "ticket_no": ticket_no,
         "plate": plate,
         "customer_id": customer_id,
+        "customer_name": customer_name,
         "material_id": None,
+        "material_name": material_name,
         "gross_weight": float(weight),
         "tare_weight": None,
         "net_weight": None,
@@ -70,6 +72,7 @@ def build_print_payload(record, direction):
         "SR_Date": record.get("second_weigh_at") or record.get("first_weigh_at"),
         "SR_User": record.get("weigh_operator"),
         "SR_Direction": direction,
+        "SR_Customer": record.get("customer_name") or "",
         "SR_Material": record.get("material_name") or "",
         "SR_GwTon": record.get("gross_weight"),
         "SR_TwTon": record.get("tare_weight"),
@@ -117,6 +120,7 @@ def execute(ctx):
             p.get("plate_source", "manual"), p.get("plate_confidence"),
             p.get("weight_source", "manual"), p.get("weigh_operator", ""),
             p.get("image_ref"),
+            p.get("customer", ""), p.get("material", ""),
         )
         ctx.db.insert_object(slug=WEIGHING_TABLE, data=rec)
         ctx.response.json({
