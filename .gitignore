@@ -9,6 +9,11 @@ config.local.json
 agent/out/
 WeighTicketPrint/out/
 
+# Debug / 暫存 (不入 repo)
+.playwright-mcp/
+.superpowers/
+/*.png
+
 # Node
 node_modules/
 
