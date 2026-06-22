@@ -1,0 +1,90 @@
+﻿<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>地磅單列印 — 現場 agent (階段一 手動)</title>
+<style>
+  body { font-family: "微軟正黑體", "Microsoft JhengHei", sans-serif; margin: 0; background:#f4f6f8; color:#222; }
+  .wrap { max-width: 820px; margin: 0 auto; padding: 20px; }
+  h1 { font-size: 20px; margin: 8px 0 4px; }
+  .sub { color:#667; font-size:13px; margin-bottom:16px; }
+  .card { background:#fff; border:1px solid #dde; border-radius:10px; padding:18px; }
+  .grid { display:grid; grid-template-columns: 1fr 1fr; gap:12px 18px; }
+  .full { grid-column: 1 / -1; }
+  label { display:block; font-size:13px; color:#445; margin-bottom:4px; }
+  input, select { width:100%; box-sizing:border-box; padding:8px 10px; font-size:15px;
+    border:1px solid #ccd; border-radius:6px; font-family:inherit; }
+  .row { display:flex; gap:12px; margin-top:18px; align-items:center; }
+  button { font-family:inherit; font-size:15px; padding:10px 18px; border-radius:8px; border:0; cursor:pointer; }
+  .btn-pdf { background:#2563eb; color:#fff; }
+  .btn-print { background:#dc2626; color:#fff; }
+  .btn-print:disabled { background:#f3b; opacity:.4; cursor:not-allowed; }
+  #msg { margin-top:14px; font-size:14px; min-height:20px; }
+  .ok { color:#15803d; } .err { color:#b91c1c; }
+  iframe { width:100%; height:480px; border:1px solid #ccd; border-radius:8px; margin-top:14px; background:#fff; }
+  .hint { font-size:12px; color:#889; margin-top:6px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>地磅單列印 — 現場 agent</h1>
+  <div class="sub">階段一:手動輸入測試。先「產生 PDF 預覽」確認版面對齊,再「列印真紙」。</div>
+  <div class="card">
+    <div class="grid">
+      <div><label>客戶名稱</label><input id="customer" value="測試環保"></div>
+      <div><label>車行</label><input id="traffic" value="大發環保企業"></div>
+      <div><label>車次</label><input id="times" value="3"></div>
+      <div><label>操作員(會磅員)</label><input id="operator" value="王小明"></div>
+      <div><label>日期時間</label><input id="datetime" type="datetime-local" value="2026-06-22T14:05"></div>
+      <div><label>單號</label><input id="sn" value="SN20260622-001"></div>
+      <div><label>料種</label><input id="material" value="一般事業廢棄物"></div>
+      <div><label>車號</label><input id="carno" value="KEP-2758"></div>
+      <div><label>毛重 (KG)</label><input id="gross" value="14540"></div>
+      <div><label>空重 (KG)</label><input id="empty" value="8200"></div>
+      <div><label>淨重 (KG)</label><input id="net" value="6340"></div>
+      <div><label>進/出</label>
+        <select id="direction"><option>進</option><option>出</option></select>
+        <div class="hint">此表單無對應預印欄位,暫不列印</div>
+      </div>
+    </div>
+    <div class="row">
+      <button class="btn-pdf" onclick="submit('pdf')">產生 PDF 預覽</button>
+      <button class="btn-print" id="printBtn" onclick="doPrint()" disabled>列印真紙</button>
+      <span id="msg"></span>
+    </div>
+    <iframe id="pv" title="PDF 預覽" style="display:none"></iframe>
+  </div>
+</div>
+<script>
+const FIELDS = ["customer","traffic","times","operator","datetime","sn","material","carno","gross","empty","net","direction"];
+function collect(){ const o={}; for(const f of FIELDS){ o[f]=document.getElementById(f).value; } return o; }
+function setMsg(t, ok){ const m=document.getElementById('msg'); m.textContent=t; m.className = ok?'ok':'err'; }
+
+async function submit(mode){
+  const body = collect(); body.mode = mode;
+  setMsg('處理中…', true);
+  try{
+    const r = await fetch('/print', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)});
+    const j = await r.json();
+    if(!j.ok){ setMsg('失敗:'+(j.reason||r.status), false); return; }
+    if(mode==='pdf'){
+      const pv=document.getElementById('pv'); pv.style.display='block'; pv.src=j.pdfUrl;
+      document.getElementById('printBtn').disabled=false;
+      setMsg('PDF 已產生,請檢查版面;確認後再列印真紙。', true);
+    }
+  }catch(e){ setMsg('連線錯誤:'+e.message, false); }
+}
+async function doPrint(){
+  if(!confirm('確定要列印真紙(三聯磅單)嗎?')) return;
+  const body = collect(); body.mode='print';
+  setMsg('送印中…', true);
+  try{
+    const r = await fetch('/print', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)});
+    const j = await r.json();
+    setMsg(j.ok ? ('已送印至 '+j.printer) : ('列印失敗:'+(j.reason||r.status)), j.ok);
+  }catch(e){ setMsg('連線錯誤:'+e.message, false); }
+}
+</script>
+</body>
+</html>

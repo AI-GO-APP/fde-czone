@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report ScriptLanguage="CSharp" ReportInfo.Created="02/28/2014 00:48:08" ReportInfo.Modified="06/15/2026 09:51:22" ReportInfo.CreatorVersion="2017.3.2.0" PrintSettings.Printer="EPSON LQ-690CII" PrintSettings.SavePrinterWithReport="true" PrintSettings.PaperSource="261">
+  <Dictionary>
+    <OdbcDataConnection Name="Connection" ConnectionString="rijcmlqdeQ42W7aIJVrb7xW1jhVxzV3YodHGlhMW9BFprbxKVyCdaQTr6+gcCUTUA2fnvWNqu6OlmBt3cv9k3FqtP3pfKWpV/tVtX/bc/R9DpJ6jNKiCZE7oy6XJPMR1zGHRvFXnJWje8SEslogyaGeQkJw9g==">
+      <TableDataSource Name="Query" DataType="System.Int32" PropName="ScalesRecord" Enabled="true" TableName="ScalesRecord">
+        <Column Name="SR_No" DataType="System.Int32"/>
+        <Column Name="SR_DatetimeG" DataType="System.DateTime"/>
+        <Column Name="SR_DatetimeE" DataType="System.DateTime"/>
+        <Column Name="SR_SN" DataType="System.String"/>
+        <Column Name="SR_Material" DataType="System.String"/>
+        <Column Name="SR_CarNo" DataType="System.String"/>
+        <Column Name="SR_GrossWeight" DataType="System.Int32"/>
+        <Column Name="SR_EmptyWeight" DataType="System.Int32"/>
+        <Column Name="SR_NetWeight" DataType="System.Int32"/>
+        <Column Name="SR_Customer" DataType="System.String"/>
+        <Column Name="SR_Field1" DataType="System.String"/>
+        <Column Name="SR_Field2" DataType="System.String"/>
+        <Column Name="SR_Traffic" DataType="System.String"/>
+        <Column Name="SR_Volume" DataType="System.String"/>
+        <Column Name="SR_Times" DataType="System.Int16"/>
+        <Column Name="SR_TotalWeight" DataType="System.Int32"/>
+        <Column Name="SR_User" DataType="System.String"/>
+        <Column Name="SR_Pay" DataType="System.Int32"/>
+        <Column Name="SR_CreateDate" DataType="System.DateTime"/>
+        <Column Name="SR_ModifyDate" DataType="System.DateTime"/>
+        <Column Name="SR_Note" DataType="System.String"/>
+        <Column Name="SR_Status" DataType="System.String"/>
+        <Column Name="SR_Place" DataType="System.String"/>
+        <Column Name="SR_SpecialCar" DataType="System.String"/>
+        <Column Name="SR_StationNo" DataType="System.String"/>
+        <Column Name="SR_DeviceIdG" DataType="System.String"/>
+        <Column Name="SR_DeviceIdE" DataType="System.String"/>
+        <Column Name="SR_Flag" DataType="System.Int32"/>
+      </TableDataSource>
+    </OdbcDataConnection>
+    <Parameter Name="Title" DataType="System.String"/>
+  </Dictionary>
+  <ReportPage Name="Page1" PaperWidth="242" PaperHeight="178" LeftMargin="0" TopMargin="0" RightMargin="0" BottomMargin="0" FirstPageSource="15" OtherPagesSource="15">
+    <ReportTitleBand Name="ReportTitle1" Width="914.76" Height="652">
+      <TextObject Name="QueryWP_Name" Left="330.71" Top="145.53" Width="158.74" Height="18.9" Text="[Query.SR_Customer]" Padding="2, 1, 2, 1" Font="Times New Roman, 12pt"/>
+      <TextObject Name="QueryWP_Company" Left="357.17" Top="283.49" Width="158.74" Height="18.9" Text="[Query.SR_Traffic]" Padding="2, 1, 2, 1" Font="Times New Roman, 12pt"/>
+      <TextObject Name="QueryWP_Times" Left="357.17" Top="306.17" Width="158.74" Height="18.9" Text="[Query.SR_Times]" Padding="2, 1, 2, 1" Font="Times New Roman, 12pt"/>
+      <TextObject Name="QueryWP_User" Left="357.17" Top="340.18" Width="160.59" Height="18.9" Text="[Query.SR_User]" Padding="2, 1, 2, 1" Font="Times New Roman, 12pt"/>
+      <TextObject Name="QueryWP_DatetimeG" Left="357.17" Top="391.21" Width="158.74" Height="18.9" Text="[Query.SR_DatetimeG]" Padding="2, 1, 2, 1" Format="Date" Format.Format="d" Font="Times New Roman, 12pt"/>
+      <TextObject Name="QueryWP_DatetimeG1" Left="357.17" Top="421.44" Width="158.74" Height="18.9" Text="[Query.SR_DatetimeG]" Padding="2, 1, 2, 1" Format="Time" Format.Format="HH:mm" Font="Times New Roman, 12pt"/>
+      <TextObject Name="QueryWP_SN" Left="357.17" Top="451.68" Width="158.74" Height="18.9" Text="[Query.SR_SN]" Padding="2, 1, 2, 1" Font="Times New Roman, 12pt"/>
+      <TextObject Name="QueryWP_StuffNo" Left="357.17" Top="489.48" Width="158.74" Height="18.9" Text="[Query.SR_Material]" Padding="2, 1, 2, 1" Font="Times New Roman, 12pt"/>
+      <TextObject Name="QueryWP_CarNo" Left="357.17" Top="519.71" Width="158.74" Height="18.9" Text="[Query.SR_CarNo]" Padding="2, 1, 2, 1" Font="Times New Roman, 12pt"/>
+      <TextObject Name="QueryWP_GrossWeight" Left="357.17" Top="549.95" Width="158.74" Height="18.9" Text="[Query.SR_GrossWeight] KG" Padding="2, 1, 2, 1" Font="Times New Roman, 12pt"/>
+      <TextObject Name="QueryWP_EmptyWeight" Left="357.17" Top="580.18" Width="158.74" Height="18.9" Text="[Query.SR_EmptyWeight] KG" Padding="2, 1, 2, 1" Font="Times New Roman, 12pt"/>
+      <TextObject Name="QueryWP_NetWeight" Left="357.17" Top="614.2" Width="158.74" Height="18.9" Text="[Query.SR_NetWeight] KG" Padding="2, 1, 2, 1" Font="Times New Roman, 12pt"/>
+      <TextObject Name="Memo1" Left="62.36" Top="141.75" Width="158.74" Height="18.9" Text="[Query.SR_Customer]" Padding="2, 1, 2, 1" Font="Times New Roman, 12pt"/>
+      <TextObject Name="Memo4" Left="85.04" Top="283.49" Width="158.74" Height="18.9" Text="[Query.SR_Traffic]" Padding="2, 1, 2, 1" Font="Times New Roman, 12pt"/>
+      <TextObject Name="Memo5" Left="85.04" Top="306.17" Width="158.74" Height="18.9" Text="[Query.SR_Times]" Padding="2, 1, 2, 1" Font="Times New Roman, 12pt"/>
+      <TextObject Name="Memo6" Left="85.04" Top="340.18" Width="160.59" Height="18.9" Text="[Query.SR_User]" Padding="2, 1, 2, 1" Font="Times New Roman, 12pt"/>
+      <TextObject Name="Memo7" Left="85.04" Top="391.21" Width="158.74" Height="18.9" Text="[Query.SR_DatetimeG]" Padding="2, 1, 2, 1" Format="Date" Format.Format="d" Font="Times New Roman, 12pt"/>
+      <TextObject Name="Memo8" Left="85.04" Top="421.44" Width="158.74" Height="18.9" Text="[Query.SR_DatetimeG]" Padding="2, 1, 2, 1" Format="Time" Format.Format="HH:mm" Font="Times New Roman, 12pt"/>
+      <TextObject Name="Memo9" Left="85.04" Top="451.68" Width="158.74" Height="18.9" Text="[Query.SR_SN]" Padding="2, 1, 2, 1" Font="Times New Roman, 12pt"/>
+      <TextObject Name="Memo10" Left="85.04" Top="489.48" Width="158.74" Height="18.9" Text="[Query.SR_Material]" Padding="2, 1, 2, 1" Font="Times New Roman, 12pt"/>
+      <TextObject Name="Memo11" Left="85.04" Top="519.71" Width="158.74" Height="18.9" Text="[Query.SR_CarNo]" Padding="2, 1, 2, 1" Font="Times New Roman, 12pt"/>
+      <TextObject Name="Memo12" Left="85.04" Top="549.95" Width="158.74" Height="18.9" Text="[Query.SR_GrossWeight] KG" Padding="2, 1, 2, 1" Font="Times New Roman, 12pt"/>
+      <TextObject Name="Memo13" Left="85.04" Top="580.18" Width="158.74" Height="18.9" Text="[Query.SR_EmptyWeight] KG" Padding="2, 1, 2, 1" Font="Times New Roman, 12pt"/>
+      <TextObject Name="Memo14" Left="85.04" Top="614.2" Width="158.74" Height="18.9" Text="[Query.SR_NetWeight] KG" Padding="2, 1, 2, 1" Font="Times New Roman, 12pt"/>
+      <TextObject Name="Memo15" Left="606.61" Top="145.53" Width="158.74" Height="18.9" Text="[Query.SR_Customer]" Padding="2, 1, 2, 1" Font="Times New Roman, 12pt"/>
+      <TextObject Name="Memo18" Left="633.07" Top="279.71" Width="158.74" Height="18.9" Text="[Query.SR_Traffic]" Padding="2, 1, 2, 1" Font="Times New Roman, 12pt"/>
+      <TextObject Name="Memo19" Left="633.07" Top="302.39" Width="158.74" Height="18.9" Text="[Query.SR_Times]" Padding="2, 1, 2, 1" Font="Times New Roman, 12pt"/>
+      <TextObject Name="Memo20" Left="633.07" Top="340.18" Width="160.59" Height="18.9" Text="[Query.SR_User]" Padding="2, 1, 2, 1" Font="Times New Roman, 12pt"/>
+      <TextObject Name="Memo21" Left="633.07" Top="391.21" Width="158.74" Height="18.9" Text="[Query.SR_DatetimeG]" Padding="2, 1, 2, 1" Format="Date" Format.Format="d" Font="Times New Roman, 12pt"/>
+      <TextObject Name="Memo22" Left="633.07" Top="421.44" Width="158.74" Height="18.9" Text="[Query.SR_DatetimeG]" Padding="2, 1, 2, 1" Format="Time" Format.Format="HH:mm" Font="Times New Roman, 12pt"/>
+      <TextObject Name="Memo23" Left="633.07" Top="451.68" Width="158.74" Height="18.9" Text="[Query.SR_SN]" Padding="2, 1, 2, 1" Font="Times New Roman, 12pt"/>
+      <TextObject Name="Memo24" Left="633.07" Top="489.48" Width="158.74" Height="18.9" Text="[Query.SR_Material]" Padding="2, 1, 2, 1" Font="Times New Roman, 12pt"/>
+      <TextObject Name="Memo25" Left="633.07" Top="519.71" Width="158.74" Height="18.9" Text="[Query.SR_CarNo]" Padding="2, 1, 2, 1" Font="Times New Roman, 12pt"/>
+      <TextObject Name="Memo26" Left="633.07" Top="549.95" Width="158.74" Height="18.9" Text="[Query.SR_GrossWeight] KG" Padding="2, 1, 2, 1" Font="Times New Roman, 12pt"/>
+      <TextObject Name="Memo27" Left="633.07" Top="580.18" Width="158.74" Height="18.9" Text="[Query.SR_EmptyWeight] KG" Padding="2, 1, 2, 1" Font="Times New Roman, 12pt"/>
+      <TextObject Name="Memo28" Left="633.07" Top="614.2" Width="158.74" Height="18.9" Text="[Query.SR_NetWeight] KG" Padding="2, 1, 2, 1" Font="Times New Roman, 12pt"/>
+      <TextObject Name="Text1" Left="7.56" Top="60.48" Width="234.34" Height="37.8" Text="薪榮環保股份有限公司" Padding="2, 1, 2, 1" Font="Times New Roman, 11pt"/>
+      <TextObject Name="Text2" Left="258.93" Top="60.48" Width="234.34" Height="37.8" Text="薪榮環保股份有限公司" Padding="2, 1, 2, 1" Font="Times New Roman, 11pt"/>
+      <TextObject Name="Text3" Left="529.2" Top="60.48" Width="234.34" Height="37.8" Text="薪榮環保股份有限公司" Padding="2, 1, 2, 1" Font="Times New Roman, 11pt"/>
+      <TextObject Name="Text4" Left="328.83" Top="185.22" Width="158.74" Height="18.9" Text="[Query.SR_Field1]" Padding="2, 1, 2, 1" Font="Times New Roman, 12pt"/>
+      <TextObject Name="Text5" Left="60.48" Top="185.22" Width="158.74" Height="18.9" Text="[Query.SR_Field1]" Padding="2, 1, 2, 1" Font="Times New Roman, 12pt"/>
+      <TextObject Name="Text6" Left="604.73" Top="185.22" Width="158.74" Height="18.9" Text="[Query.SR_Field1]" Padding="2, 1, 2, 1" Font="Times New Roman, 12pt"/>
+    </ReportTitleBand>
+  </ReportPage>
+</Report>

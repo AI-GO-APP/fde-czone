@@ -1,0 +1,11 @@
+﻿{
+  "port": 9180,
+  "printer": "EPSON LQ-690CII",
+  "font": "新細明體",
+  "aigoBaseUrl": "https://ai-go.app",
+  "appId": "<填我們的 app_id>",
+  "email": "<agent 專用帳號>",
+  "password": "<密碼>",
+  "weighTicketRoot": "",
+  "frxPath": ""
+}
