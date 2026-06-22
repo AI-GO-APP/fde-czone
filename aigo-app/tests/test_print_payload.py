@@ -23,3 +23,12 @@ def test_payload_date_prefers_second_weigh_time():
 
 def test_payload_material_defaults_to_empty():
     assert build_print_payload({}, "進")["SR_Material"] == ""
+
+def test_payload_maps_customer_name():
+    record = {"customer_name": "測試環保", "material_name": "廢木料-棧板"}
+    payload = build_print_payload(record, "進")
+    assert payload["SR_Customer"] == "測試環保"
+    assert payload["SR_Material"] == "廢木料-棧板"
+
+def test_payload_customer_defaults_to_empty():
+    assert build_print_payload({}, "進")["SR_Customer"] == ""

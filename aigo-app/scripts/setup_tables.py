@@ -20,6 +20,7 @@ TABLES = [
         ("second_weigh_at", "出場時間", "date"), ("status", "狀態", "text"),
         ("has_manifest", "隨車聯單", "text"), ("settle_status", "結帳狀態", "text"),
         ("settled_at", "結帳時間", "date"), ("weigh_operator", "過磅人員", "text"),
+        ("customer_name", "客戶名稱", "text"), ("material_name", "料種", "text"),
         ("plate_source", "車牌來源", "text"), ("plate_confidence", "辨識信心", "number"),
         ("weight_source", "重量來源", "text"), ("image_ref", "影像", "text"),
         ("note", "備註", "text"),

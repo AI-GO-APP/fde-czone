@@ -2,6 +2,20 @@
 .env
 *.env
 !.env.example
+config.local.json
+**/config.local.json
+
+# 產生物 (預覽 / 列印輸出)
+agent/out/
+WeighTicketPrint/out/
+
+# Debug / 暫存 (不入 repo)
+.playwright-mcp/
+.superpowers/
+/*.png
+
+# Node
+node_modules/
 
 # Python
 __pycache__/

@@ -38,3 +38,29 @@ def test_first_weigh_without_known_vehicle_flags_manual_customer():
     weigh.execute(ctx)
     assert ctx.response.body["customer_id"] is None
     assert ctx.response.body["needs_manual"] == ["customer"]
+
+def test_first_weigh_stores_customer_and_material():
+    db = FakeDB(weighing=[], vehicle=[])
+    ctx = FakeCtx({"plate": "ABC-1234", "weight": 25.0, "weigh_operator": "王小明",
+                   "customer": "測試環保", "material": "廢木料-棧板",
+                   "now": "2026-06-02T11:57:18"}, db=db)
+    weigh.execute(ctx)
+    rec = db.inserted[0][1]
+    assert rec["customer_name"] == "測試環保"
+    assert rec["material_name"] == "廢木料-棧板"
+    pp = ctx.response.body["print_payload"]
+    assert pp["SR_Customer"] == "測試環保"
+    assert pp["SR_Material"] == "廢木料-棧板"
+
+def test_second_weigh_keeps_first_customer_material():
+    open_rec = {"id": "rec-1", "plate": "ABC-1234", "status": "open",
+                "gross_weight": 25.0, "ticket_no": "20260602-001",
+                "customer_name": "測試環保", "material_name": "廢木料-棧板",
+                "first_weigh_at": "2026-06-02T11:57:18"}
+    db = FakeDB(weighing=[open_rec], vehicle=[])
+    ctx = FakeCtx({"plate": "ABC-1234", "weight": 10.0, "weigh_operator": "王小明",
+                   "now": "2026-06-02T12:05:54"}, db=db)
+    weigh.execute(ctx)
+    pp = ctx.response.body["print_payload"]
+    assert pp["SR_Customer"] == "測試環保"
+    assert pp["SR_Material"] == "廢木料-棧板"

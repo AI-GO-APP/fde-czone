@@ -35,3 +35,9 @@
 - `POST /compile/compile/{slug}` 對尚無已發布版的 app 回 `404 App 尚無已發布版 (published_vfs)內容`。
 - **Action 上傳 source 後即可執行**，不需 compile/publish。故 `deploy.py` 將 compile/publish 設為 best-effort（失敗僅警告）。
 - 待有實際前端 UI 時再處理首次發布流程。
+
+## 7. 前端首次部署實測（2026-06-22）
+- `deploy.py` 的 `read_vfs` 需排除 `node_modules/` 與 `*.test.ts(x)`（前端加了 vitest 後會誤上傳上千檔）。已修。
+- cp950 主控台跑 deploy.py 會在印 `⚠️` 時 `UnicodeEncodeError`；用 `PYTHONUTF8=1` 執行即可。
+- 本機無 Python，用免安裝版 `C:\Users\user\tools\python-3.12.10-embed\python.exe`（deploy.py 只用標準庫，含 ssl，可跑）。
+- App `薪榮內部應用`（slug 7280f9ec3093）status=draft：`PUT source` 200 成功，但 compile/publish 因「尚無已發布版」跳過。**首次發布需在 aigo 平台 UI 手動 publish 一次**，之後 deploy.py 的 compile/publish 才能用。
