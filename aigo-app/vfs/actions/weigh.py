@@ -14,7 +14,7 @@ def make_ticket_no(date_str, seq):
 
 
 def compute_net_weight(gross, tare):
-    """淨重 = 毛重 − 空重，單位公噸，取小數 3 位。"""
+    """淨重 = 毛重 − 空重，單位公斤。"""
     return round(float(gross) - float(tare), 3)
 
 
@@ -75,9 +75,9 @@ def build_print_payload(record, direction):
         "SR_Direction": direction,
         "SR_Customer": record.get("customer_name") or "",
         "SR_Material": record.get("material_name") or "",
-        "SR_GwTon": record.get("gross_weight"),
-        "SR_TwTon": record.get("tare_weight"),
-        "SR_NwTon": record.get("net_weight"),
+        "SR_Gw": record.get("gross_weight"),
+        "SR_Tw": record.get("tare_weight"),
+        "SR_Nw": record.get("net_weight"),
     }
 
 

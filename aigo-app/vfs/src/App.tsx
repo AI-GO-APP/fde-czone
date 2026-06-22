@@ -4,7 +4,7 @@ import { callAction, listWeighings, WeighingRow } from "./aigoClient";
 
 export default function App() {
   const [plate, setPlate] = useState("KEP-2758");
-  const [weight, setWeight] = useState("14.54");
+  const [weight, setWeight] = useState("14540");
   const [operator, setOperator] = useState("王小明");
   const [customer, setCustomer] = useState("測試環保");
   const [material, setMaterial] = useState("一般事業廢棄物");
@@ -40,7 +40,7 @@ export default function App() {
       <h2 className="wp-title">薪榮地磅 — 驗證輸入</h2>
       <div className="wp-grid">
         <label className="wp-field">車號<input value={plate} onChange={e => setPlate(e.target.value)} /></label>
-        <label className="wp-field">重量(公噸)<input value={weight} onChange={e => setWeight(e.target.value)} /></label>
+        <label className="wp-field">重量(公斤)<input value={weight} onChange={e => setWeight(e.target.value)} /></label>
         <label className="wp-field">會磅員<input value={operator} onChange={e => setOperator(e.target.value)} /></label>
         <label className="wp-field">客戶名稱<input value={customer} onChange={e => setCustomer(e.target.value)} /></label>
         <label className="wp-field">料種<input value={material} onChange={e => setMaterial(e.target.value)} /></label>

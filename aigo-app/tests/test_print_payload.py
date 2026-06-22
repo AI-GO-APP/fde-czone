@@ -15,7 +15,7 @@ def test_payload_maps_record_to_fast_report_fields():
     assert payload["SR_User"] == "王小明"
     assert payload["SR_Direction"] == "進"
     assert payload["SR_Material"] == "廢木料-棧板"
-    assert payload["SR_GwTon"] == 25.0
+    assert payload["SR_Gw"] == 25.0
 
 def test_payload_date_prefers_second_weigh_time():
     record = {"first_weigh_at": "A", "second_weigh_at": "B"}
