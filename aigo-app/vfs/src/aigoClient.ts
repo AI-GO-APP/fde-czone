@@ -50,6 +50,7 @@ export async function getObjectId(slug: string): Promise<string> {
 export interface WeighingRow {
   id: string; ticket_no: string; plate: string; weigh_operator: string;
   status: string; gross_weight: number | null; net_weight: number | null; at: string;
+  customer_name: string; material_name: string;
 }
 
 export function mapRecord(raw: any): WeighingRow {
@@ -63,6 +64,8 @@ export function mapRecord(raw: any): WeighingRow {
     gross_weight: d.gross_weight === undefined ? null : d.gross_weight,
     net_weight: d.net_weight === undefined ? null : d.net_weight,
     at: d.second_weigh_at || d.first_weigh_at || "",
+    customer_name: d.customer_name || "",
+    material_name: d.material_name || "",
   };
 }
 

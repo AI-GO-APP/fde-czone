@@ -35,12 +35,26 @@ describe("mapRecord", () => {
       first_weigh_at: "2026-06-22T04:00:00", second_weigh_at: "2026-06-22T05:00:00" } });
     expect(row).toEqual({
       id: "r1", ticket_no: "20260622-002", plate: "KEP-2758", weigh_operator: "王小明",
-      status: "done", gross_weight: 14.54, net_weight: 6.34, at: "2026-06-22T05:00:00" });
+      status: "done", gross_weight: 14.54, net_weight: 6.34, at: "2026-06-22T05:00:00",
+      customer_name: "", material_name: "" });
   });
   it("一磅時 fallback first, 缺值補空/null", () => {
     const row = mapRecord({ id: "r2", data: { ticket_no: "20260622-003", plate: "ABC", first_weigh_at: "2026-06-22T06:00:00" } });
     expect(row.at).toBe("2026-06-22T06:00:00");
     expect(row.weigh_operator).toBe("");
     expect(row.net_weight).toBeNull();
+  });
+
+  describe("mapRecord 客戶/料種", () => {
+    it("帶出 customer_name 與 material_name", () => {
+      const row = mapRecord({ id: "1", data: { customer_name: "測試環保", material_name: "廢木料-棧板" } });
+      expect(row.customer_name).toBe("測試環保");
+      expect(row.material_name).toBe("廢木料-棧板");
+    });
+    it("缺欄位時回空字串", () => {
+      const row = mapRecord({ id: "2", data: {} });
+      expect(row.customer_name).toBe("");
+      expect(row.material_name).toBe("");
+    });
   });
 });
