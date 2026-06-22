@@ -52,10 +52,12 @@ def ensure_references(h, app_id):
 def read_vfs(vfs_dir):
     vfs = {}
     for root, dirs, files in os.walk(vfs_dir):
-        dirs[:] = [d for d in dirs if d != "__pycache__"]  # 不上傳 Python 快取
+        dirs[:] = [d for d in dirs if d not in ("__pycache__", "node_modules")]  # 不上傳 Python 快取 / node 相依
         for fname in files:
             if fname.endswith(".pyc"):
                 continue
+            if fname.endswith(".test.ts") or fname.endswith(".test.tsx"):
+                continue  # 不上傳前端測試檔 (引用 vitest, 非執行期, 平台不需編譯)
             full = os.path.join(root, fname)
             rel = os.path.relpath(full, vfs_dir).replace(os.sep, "/")
             with open(full, "r", encoding="utf-8") as f:
