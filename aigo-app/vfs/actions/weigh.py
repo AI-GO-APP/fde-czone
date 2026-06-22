@@ -1,10 +1,11 @@
 """過磅配對 Action：辨識結果→查車籍→判斷一磅/二磅→配對算淨重→寫表→回列印 payload。"""
-from datetime import datetime
+from datetime import datetime, timedelta
 
 WEIGHING_TABLE = "x_czone_weighing"
 VEHICLE_TABLE = "x_czone_vehicle"
 STATUS_OPEN = "open"
 STATUS_DONE = "done"
+TW_OFFSET = timedelta(hours=8)  # 系統在台灣(UTC+8)，時間一律存台灣本地時間
 
 
 def make_ticket_no(date_str, seq):
@@ -107,7 +108,7 @@ def execute(ctx):
         ctx.response.json({"error": "缺少 plate 或 weight"})
         return
 
-    now = p.get("now") or datetime.utcnow().isoformat()
+    now = p.get("now") or (datetime.utcnow() + TW_OFFSET).isoformat()
     open_rec = _find_open(ctx, plate)
 
     if decide_event(open_rec) == "first":
