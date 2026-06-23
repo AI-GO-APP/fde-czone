@@ -78,6 +78,11 @@ try {
 }
 Write-Host ("現場 agent 已啟動 -> http://localhost:{0}/  (Ctrl+C 結束)" -f $Port) -ForegroundColor Cyan
 
+# listener 已就緒, 此時開瀏覽器最準 (由 start.cmd 設 AGENT_OPEN_BROWSER=1 觸發)
+if ($env:AGENT_OPEN_BROWSER -eq '1') {
+    try { Start-Process ("http://localhost:{0}/" -f $Port) } catch {}
+}
+
 while ($listener.IsListening) {
     $ctx = $listener.GetContext()
     $req = $ctx.Request
