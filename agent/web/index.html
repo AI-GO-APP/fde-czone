@@ -28,11 +28,10 @@
 <body>
 <div class="wrap">
   <h1>地磅單列印 — 現場 agent</h1>
-  <div class="sub">從 aigo 撈最近過磅紀錄,點一列選取,再「預覽 PDF」或「列印真紙」。</div>
+  <div class="sub">從 aigo 撈最近過磅紀錄,點一列選取,再按「列印真紙」。</div>
   <div class="bar">
     <button class="btn-refresh" onclick="load()">重新整理</button>
-    <button class="btn-pdf" id="btnPdf" onclick="doPrint('pdf')" disabled>預覽 PDF</button>
-    <button class="btn-print" id="btnPrint" onclick="doPrint('print')" disabled>列印真紙</button>
+    <button class="btn-print" id="btnPrint" onclick="doPrint()" disabled>列印真紙</button>
     <span id="msg"></span>
   </div>
   <table>
@@ -41,7 +40,6 @@
     </tr></thead>
     <tbody id="rows"><tr><td colspan="9">載入中…</td></tr></tbody>
   </table>
-  <iframe id="pv" title="PDF 預覽"></iframe>
 </div>
 <script>
 let selectedId = null;
@@ -51,7 +49,6 @@ function fmt(v){ return (v===null||v===undefined) ? '' : v; }
 async function load(){
   setMsg('載入中…', true);
   selectedId = null;
-  document.getElementById('btnPdf').disabled = true;
   document.getElementById('btnPrint').disabled = true;
   try{
     const j = await (await fetch('/records')).json();
@@ -67,7 +64,6 @@ async function load(){
         selectedId = r.id;
         for(const x of tb.children) x.classList.remove('sel');
         tr.classList.add('sel');
-        document.getElementById('btnPdf').disabled = false;
         document.getElementById('btnPrint').disabled = false;
         setMsg('已選: '+fmt(r.ticket_no), true);
       };
@@ -77,20 +73,15 @@ async function load(){
   }catch(e){ setMsg('連線錯誤: '+e.message, false); }
 }
 
-async function doPrint(mode){
+async function doPrint(){
   if(!selectedId){ setMsg('請先點一列選取', false); return; }
-  if(mode==='print' && !confirm('確定要列印真紙(三聯磅單)嗎?')) return;
-  setMsg(mode==='print'?'送印中…':'產生預覽中…', true);
+  if(!confirm('確定要列印真紙(三聯磅單)嗎?')) return;
+  setMsg('送印中…', true);
   try{
     const j = await (await fetch('/print-record', {method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ id: selectedId, mode })})).json();
+      body: JSON.stringify({ id: selectedId, mode: 'print' })})).json();
     if(!j.ok){ setMsg('失敗: '+(j.reason||''), false); return; }
-    if(mode==='pdf'){
-      const pv=document.getElementById('pv'); pv.style.display='block'; pv.src=j.pdfUrl;
-      setMsg('PDF 已產生,確認版面後再列印真紙', true);
-    } else {
-      setMsg('已送印至 '+fmt(j.printer)+(j.ticket_no?(' ('+j.ticket_no+')'):''), true);
-    }
+    setMsg('已送印至 '+fmt(j.printer)+(j.ticket_no?(' ('+j.ticket_no+')'):''), true);
   }catch(e){ setMsg('連線錯誤: '+e.message, false); }
 }
 
