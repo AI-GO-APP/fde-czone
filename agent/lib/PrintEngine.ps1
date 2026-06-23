@@ -76,9 +76,9 @@ function ConvertTo-FieldValue {
     switch ($Binding) {
         'SR_DatetimeG'   { try { return [datetime]$s } catch { return $s } }
         'SR_Times'       { $n = 0; if ([int]::TryParse($s, [ref]$n)) { return [int16]$n }; return $s }
-        'SR_GrossWeight' { $n = 0; if ([int]::TryParse($s, [ref]$n)) { return [int]$n }; return $s }
-        'SR_EmptyWeight' { $n = 0; if ([int]::TryParse($s, [ref]$n)) { return [int]$n }; return $s }
-        'SR_NetWeight'   { $n = 0; if ([int]::TryParse($s, [ref]$n)) { return [int]$n }; return $s }
+        'SR_GrossWeight' { $g = 0.0; if ([double]::TryParse($s, [ref]$g)) { return [int][math]::Round($g) }; return $s }
+        'SR_EmptyWeight' { $g = 0.0; if ([double]::TryParse($s, [ref]$g)) { return [int][math]::Round($g) }; return $s }
+        'SR_NetWeight'   { $g = 0.0; if ([double]::TryParse($s, [ref]$g)) { return [int][math]::Round($g) }; return $s }
         default          { return $s }
     }
 }
@@ -105,7 +105,7 @@ function ConvertTo-TicketData {
 function ConvertFrom-WeighingData {
     # 把 aigo x_czone_weighing 紀錄的 .data 轉成 .frx 資料字典。
     # DB 欄位 -> 友善名 -> (ConvertTo-TicketData) -> .frx 綁定。日期取二磅優先, 否則一磅。
-    # 註: customer_id / material_id 目前是 id, 之後需 join 車籍/料種表換成名稱。
+    # 使用 customer_name / material_name 文字欄
     param([Parameter(Mandatory)] $Data)
     $dt = if ($Data.second_weigh_at) { $Data.second_weigh_at } else { $Data.first_weigh_at }
     $inp = @{
@@ -115,8 +115,8 @@ function ConvertFrom-WeighingData {
         gross    = $Data.gross_weight
         empty    = $Data.tare_weight
         net      = $Data.net_weight
-        material = $Data.material_id
-        customer = $Data.customer_id
+        material = $Data.material_name
+        customer = $Data.customer_name
         datetime = $dt
     }
     return ConvertTo-TicketData $inp
