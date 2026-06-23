@@ -1,20 +1,22 @@
 @echo off
-rem 啟動磅單列印現場 agent (繞過 Restricted 執行原則 + UTF-8)
-rem 行為: 若 agent 已在跑 -> 直接開瀏覽器; 否則啟動 agent (agent 就緒時自己開瀏覽器)。
-rem 此視窗開著 = 服務運作中; 關閉視窗即停止。
+rem Start the weigh-ticket print agent (bypass Restricted policy + UTF-8 console).
+rem If the agent is already running -> just open the browser.
+rem Otherwise start the agent (it opens the browser when the listener is ready).
+rem Keep this window open = service running; close it to stop.
+rem NOTE: keep this file ASCII-only. Chinese here breaks cmd parsing on cp950 (set fails).
 chcp 65001 >nul
 set "AGENT_DIR=%~dp0"
 
-rem 1) 偵測是否已在執行 (9180)
+rem 1) detect if already running (port 9180)
 powershell -NoProfile -Command "try { Invoke-RestMethod http://localhost:9180/health -TimeoutSec 1 | Out-Null; exit 0 } catch { exit 1 }"
 if %errorlevel%==0 (
-  echo agent 已在執行,開啟瀏覽器...
+  echo Agent already running, opening browser...
   start "" http://localhost:9180/
   goto :eof
 )
 
-rem 2) 啟動 agent; 設旗標讓 agent listener 就緒時自行開瀏覽器 (時機最準)
+rem 2) start agent; flag tells agent to open the browser when the listener is ready
 set "AGENT_OPEN_BROWSER=1"
-echo 啟動磅單列印 agent... (請勿關閉此視窗;關閉即停止服務)
+echo Starting print agent... (do NOT close this window; closing stops the service)
 powershell -NoProfile -Command "& ([ScriptBlock]::Create((Get-Content -Raw -Encoding UTF8 '%~dp0Start-Agent.ps1')))"
 pause
