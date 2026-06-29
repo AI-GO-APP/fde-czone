@@ -73,25 +73,31 @@ def main():
     ensure_references(h, app_id)
     print("[3/4] 上傳 VFS...")
     vfs = read_vfs(VFS_DIR)
-    s, b = _req("PUT", f"{API_BASE}/builder/apps/{app_id}/source", h, {"vfs_state": vfs}, timeout=60)
-    print(f"  上傳: {s}")
+    # 樂觀鎖（平台搬遷 AWS 後新增）：PUT /source 需帶 expected_version，先 GET 當前版號帶入。
+    s0, app = _req("GET", f"{API_BASE}/builder/apps/{app_id}", h)
+    payload = {"vfs_state": vfs}
+    if s0 == 200 and isinstance(app, dict) and app.get("vfs_version") is not None:
+        payload["expected_version"] = app["vfs_version"]
+    s, b = _req("PUT", f"{API_BASE}/builder/apps/{app_id}/source", h, payload, timeout=60)
+    print(f"  上傳: {s}（expected_version={payload.get('expected_version')}）")
     if s != 200:
         sys.exit(f"❌ 上傳失敗：{b}")
     # 前端 compile/publish 為 best-effort：Action 不需發布即可執行（見 PLATFORM_NOTES.md）。
     # 全新 app 尚無已發布版時 compile 會 404，屬正常，僅警告不中斷。
-    print("[3.5/4] 編譯前端（best-effort）...")
+    print("[3.5/4] 編譯前端...")
     s, b = _req("GET", f"{API_BASE}/builder/apps/{app_id}", h)
     slug = b.get("slug", app_id)
-    s2, r = _req("POST", f"{API_BASE}/compile/compile/{slug}", h, {}, timeout=60)
-    if isinstance(r, dict) and r.get("success"):
-        print("  編譯：成功")
-        print("[4/4] 發布前端...")
-        s, b = _req("POST", f"{API_BASE}/builder/apps/{app_id}/publish", h, {"published_assets": {}})
-        print(f"  發布: {s}")
-    else:
+    s2, r = _req("POST", f"{API_BASE}/compile/compile/{slug}?dev=true", h, {}, timeout=120)
+    if not (isinstance(r, dict) and r.get("success")):
         detail = r.get("detail") or r.get("error") if isinstance(r, dict) else r
-        print(f"  ⚠️ 跳過前端 compile/publish（{detail}）—Action 已上傳可直接執行")
-    print("✅ 部署完成（Action 已就緒）")
+        sys.exit(f"❌ 編譯失敗：{detail}")
+    print(f"  編譯：成功（{s2}）")
+    print("[4/4] 發布前端...")
+    s, b = _req("POST", f"{API_BASE}/builder/apps/{app_id}/publish", h, {"published_assets": {}})
+    print(f"  發布: {s}")
+    if s not in (200, 201):
+        sys.exit(f"❌ 發布失敗：{b}")
+    print("✅ 部署完成（前端已發布）")
 
 
 if __name__ == "__main__":
