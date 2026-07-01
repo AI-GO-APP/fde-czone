@@ -25,6 +25,7 @@ Check 'state changed push' (Get-PushDecision -State 'idle' -StateChanged $true -
 Check 'idle skip' (Get-PushDecision -State 'idle' -StateChanged $false -LastPushEpoch 100 -FileAtEpoch 159.9999 -NowEpoch 159.9999) 'skip'
 # 閒置滿 60 秒(剛好達標,-ge 60 算 heartbeat)→ heartbeat
 Check 'idle heartbeat' (Get-PushDecision -State 'idle' -StateChanged $false -LastPushEpoch 100 -FileAtEpoch 159 -NowEpoch 160.0001) 'heartbeat'
+Check 'idle heartbeat exact-60 tie' (Get-PushDecision -State 'idle' -StateChanged $false -LastPushEpoch 100 -FileAtEpoch 159 -NowEpoch 160) 'heartbeat'
 Check 'idle heartbeat2' (Get-PushDecision -State 'idle' -StateChanged $false -LastPushEpoch 100 -FileAtEpoch 165 -NowEpoch 165) 'heartbeat'
 
 if ($fail -gt 0) { Write-Host "$fail FAILED"; exit 1 } else { Write-Host 'ALL PASS'; exit 0 }
