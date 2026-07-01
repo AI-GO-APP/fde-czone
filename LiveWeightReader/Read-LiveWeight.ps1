@@ -66,9 +66,15 @@ public class WeightReader {
     StringBuilder sb = new StringBuilder(256); GetClassName(h, sb, 256); return sb.ToString();
   }
 
+  static void WriteCurrent(string path, int weight, string state){
+    string at = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:sszzz");
+    string json = "{\"weight\": " + weight + ", \"at\": \"" + at + "\", \"state\": \"" + state + "\"}";
+    try { File.WriteAllText(path, json); } catch {}
+  }
+
   // durationSec: 執行上限秒數(排程每次登入會重啟,故給很長)
   // pollMs: 取樣間隔; log: 記錄檔路徑
-  public static void Run(int durationSec, int pollMs, string log){
+  public static void Run(int durationSec, int pollMs, string log, string jsonPath){
     DateTime end = DateTime.Now.AddSeconds(durationSec);
     File.AppendAllText(log, string.Format("[{0:yyyy-MM-dd HH:mm:ss}] reader started (poll={1}ms)\r\n", DateTime.Now, pollMs));
     Dictionary<IntPtr,string> last = new Dictionary<IntPtr,string>();
@@ -78,6 +84,8 @@ public class WeightReader {
     string activeVal = null;
     int lastPid = -1;
     DateTime hb = DateTime.Now;
+    int curW = 0; string curState = "idle"; DateTime lastWrite = DateTime.MinValue;
+    WriteCurrent(jsonPath, curW, curState);
     while(DateTime.Now < end){
       List<uint> pids = new List<uint>();
       int curPid = 0;
@@ -122,7 +130,9 @@ public class WeightReader {
           File.AppendAllText(log, string.Format("[{0:yyyy-MM-dd HH:mm:ss}] >>> LOCKED weight control hwnd={1} (max={2})\r\n", DateTime.Now, (long)best, maxv[best]));
         }
         string cv; last.TryGetValue(best, out cv);
-        if(cv!=activeVal){ activeVal=cv; File.AppendAllText(log, string.Format("[{0:HH:mm:ss.fff}] weight: {1}\r\n", DateTime.Now, cv)); }
+        if(cv!=activeVal){ activeVal=cv; File.AppendAllText(log, string.Format("[{0:HH:mm:ss.fff}] weight: {1}\r\n", DateTime.Now, cv));
+          int pw; if(int.TryParse(cv, out pw)){ curW = pw; curState = (curW==0) ? "idle" : "weighing"; WriteCurrent(jsonPath, curW, curState); lastWrite = DateTime.Now; }
+        }
       }
       if((DateTime.Now-hb).TotalMinutes>=30){
         hb=DateTime.Now;
@@ -134,6 +144,7 @@ public class WeightReader {
           File.AppendAllText(log, string.Format("[{0:yyyy-MM-dd HH:mm:ss}] heartbeat alive, numeric statics={1}, no weighing yet\r\n", DateTime.Now, numStatics));
         }
       }
+      if((DateTime.Now - lastWrite).TotalSeconds >= 5){ WriteCurrent(jsonPath, curW, curState); lastWrite = DateTime.Now; }
       System.Threading.Thread.Sleep(pollMs);
     }
     File.AppendAllText(log, string.Format("[{0:yyyy-MM-dd HH:mm:ss}] reader finished\r\n", DateTime.Now));
@@ -143,4 +154,5 @@ public class WeightReader {
 '@
 
 # 常駐執行(每次登入由排程重啟;此處給很長的執行上限 ~10 年)
-[WeightReader]::Run(315360000, 300, $log)
+$jsonPath = Join-Path $logDir 'current-weight.json'
+[WeightReader]::Run(315360000, 300, $log, $jsonPath)
