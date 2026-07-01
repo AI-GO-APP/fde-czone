@@ -1,8 +1,10 @@
 // aigo-app/vfs/src/App.tsx
 import { useEffect, useState } from "react";
 import { callAction, listWeighings, WeighingRow } from "./aigoClient";
+import LiveWeightBoard from "./LiveWeightBoard";
 
 export default function App() {
+  const [view, setView] = useState<"board" | "form">("board");
   const [plate, setPlate] = useState("KEP-2758");
   const [weight, setWeight] = useState("14540");
   const [operator, setOperator] = useState("王小明");
@@ -37,7 +39,14 @@ export default function App() {
 
   return (
     <div className="wp-root">
-      <h2 className="wp-title">薪榮地磅 — 驗證輸入</h2>
+      <div className="wp-nav">
+        <button className="wp-btn" onClick={() => setView("board")} disabled={view === "board"}>即時看板</button>
+        <button className="wp-btn" onClick={() => setView("form")} disabled={view === "form"}>驗證輸入</button>
+      </div>
+      {view === "board" && <LiveWeightBoard />}
+      {view === "form" && (
+      <>
+        <h2 className="wp-title">薪榮地磅 — 驗證輸入</h2>
       <div className="wp-grid">
         <label className="wp-field">車號<input value={plate} onChange={e => setPlate(e.target.value)} /></label>
         <label className="wp-field">重量(公斤)<input value={weight} onChange={e => setWeight(e.target.value)} /></label>
@@ -71,6 +80,8 @@ export default function App() {
           ))}
         </tbody>
       </table>
+      </>
+      )}
     </div>
   );
 }
