@@ -85,7 +85,7 @@ public class WeightReader {
     int lastPid = -1;
     DateTime hb = DateTime.Now;
     int curW = 0; string curState = "idle"; DateTime lastWrite = DateTime.MinValue;
-    WriteCurrent(jsonPath, curW, curState);
+    WriteCurrent(jsonPath, curW, curState); lastWrite = DateTime.Now;
     while(DateTime.Now < end){
       List<uint> pids = new List<uint>();
       int curPid = 0;
@@ -97,6 +97,9 @@ public class WeightReader {
         File.AppendAllText(log, string.Format("[{0:yyyy-MM-dd HH:mm:ss}] ScalesManager PID={1} (re-scan windows)\r\n", DateTime.Now, curPid));
         lastPid = curPid;
         last.Clear(); maxv.Clear(); lastChg.Clear(); active=IntPtr.Zero; activeVal=null;
+        // ScalesManager 不在時:寫一次 idle/0,之後不再刷新→檔案自然過時→下游(pusher/看板)判離線。
+        // 刻意不在 ScalesManager 缺席時維持 5 秒刷新:讀不到磅秤就該顯示離線,而非假裝待命 0。
+        if(curPid==0){ curW=0; curState="idle"; WriteCurrent(jsonPath, curW, curState); lastWrite=DateTime.Now; }
       }
       if(pids.Count==0){ System.Threading.Thread.Sleep(pollMs); continue; }
       _pidFilter = pids;
