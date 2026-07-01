@@ -36,3 +36,27 @@ def test_update_missing_fields_returns_error():
     ctx = FakeCtx({"state": "weighing"})  # 缺 weight
     update_live_weight.execute(ctx)
     assert ctx.response.body["error"]
+
+
+def test_get_returns_current_with_server_now():
+    cur = {"id": "rec-1", "key": "current", "weight": 4830, "state": "weighing",
+           "at": "2026-07-01T14:03:13", "server_at": "2026-07-01T14:03:14"}
+    db = FakeDB(live=[cur])
+    ctx = FakeCtx({"now": "2026-07-01T14:03:20"}, db=db)
+    get_live_weight.execute(ctx)
+    b = ctx.response.body
+    assert b["weight"] == 4830
+    assert b["state"] == "weighing"
+    assert b["server_at"] == "2026-07-01T14:03:14"
+    assert b["server_now"] == "2026-07-01T14:03:20"
+
+
+def test_get_empty_returns_nulls_and_idle():
+    db = FakeDB(live=[])
+    ctx = FakeCtx({"now": "2026-07-01T14:03:20"}, db=db)
+    get_live_weight.execute(ctx)
+    b = ctx.response.body
+    assert b["weight"] is None
+    assert b["state"] == "idle"
+    assert b["server_at"] is None
+    assert b["server_now"] == "2026-07-01T14:03:20"
