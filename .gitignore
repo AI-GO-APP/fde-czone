@@ -5,9 +5,10 @@
 config.local.json
 **/config.local.json
 
-# 產生物 (預覽 / 列印輸出)
+# 產生物 (預覽 / 列印輸出 / 執行 log)
 agent/out/
 WeighTicketPrint/out/
+LiveWeightReader/out/
 
 # Debug / 暫存 (不入 repo)
 .playwright-mcp/
