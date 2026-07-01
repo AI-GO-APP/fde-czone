@@ -19,3 +19,21 @@
 .wp-table th, .wp-table td { border: 1px solid #ddd; padding: 6px 8px; text-align: left; }
 .wp-table th { background: #fafafa; }
 @media (max-width: 640px) { .wp-grid { grid-template-columns: 1fr; } }
+
+.wp-nav { display: flex; gap: 12px; margin-bottom: 16px; }
+
+.lwb-root { text-align: center; padding: 24px; }
+.lwb-title { font-size: 20px; margin: 0 0 16px; }
+.lwb-err { font-size: 13px; color: #c0392b; margin-bottom: 12px; }
+.lwb-big {
+  font-size: clamp(4rem, 18vw, 14rem);
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.lwb-unit { font-size: 0.3em; font-weight: 400; color: #888; margin-left: 0.15em; }
+.lwb-sub { margin-top: 12px; font-size: 14px; color: #888; }
+.lwb-live .lwb-big { color: #1769ff; }
+.lwb-idle .lwb-big { color: #999; }
+.lwb-offline .lwb-big { color: #999; }
+.lwb-offline { color: #b8860b; }

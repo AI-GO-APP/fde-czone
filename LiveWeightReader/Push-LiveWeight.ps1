@@ -22,7 +22,10 @@ Invoke-Expression ([IO.File]::ReadAllText((Join-Path $root 'LiveWeightReader\Pus
 Invoke-Expression ([IO.File]::ReadAllText((Join-Path $root 'agent\lib\AigoClient.ps1')))
 $Cfg = Get-Content $cfgPath -Raw | ConvertFrom-Json
 
-function Log($m) { Add-Content -Path $logPath -Value ("[{0:yyyy-MM-dd HH:mm:ss}] {1}" -f (Get-Date), $m) }
+function Log($m) {
+    try { Add-Content -Path $logPath -Value ("[{0:yyyy-MM-dd HH:mm:ss}] {1}" -f (Get-Date), $m) }
+    catch { }
+}
 function NowEpoch { [double]([DateTimeOffset]::Now.ToUnixTimeMilliseconds() / 1000.0) }
 
 Log "pusher started"
