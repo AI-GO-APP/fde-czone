@@ -31,4 +31,7 @@ REFS = [
      "columns": ["plate", "default_customer_id", "default_material_id",
                  "manual_only", "note", "active"],
      "permissions": ["read", "create", "update"]},
+    {"table_name": "x_czone_live_weight",
+     "columns": ["key", "weight", "at", "server_at", "state"],
+     "permissions": ["read", "create", "update"]},
 ]

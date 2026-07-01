@@ -30,6 +30,11 @@ TABLES = [
         ("default_material_id", "預設料種", "text"), ("manual_only", "人工處理", "text"),
         ("note", "備註", "text"), ("active", "啟用", "text"),
     ]),
+    ("x_czone_live_weight", "即時磅重", [
+        ("key", "鍵", "text"), ("weight", "重量", "number"),
+        ("at", "現場讀取時間", "text"), ("server_at", "伺服器時間", "text"),
+        ("state", "狀態", "text"),
+    ]),
 ]
 
 

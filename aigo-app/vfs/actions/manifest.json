@@ -2,6 +2,8 @@
   "actions": [
     {"name": "recognize_plate", "file": "recognize_plate.py", "description": "車牌辨識"},
     {"name": "read_weight", "file": "read_weight.py", "description": "磅數 OCR"},
-    {"name": "weigh", "file": "weigh.py", "description": "過磅配對與寫表"}
+    {"name": "weigh", "file": "weigh.py", "description": "過磅配對與寫表"},
+    {"name": "update_live_weight", "file": "update_live_weight.py", "description": "更新即時磅重"},
+    {"name": "get_live_weight", "file": "get_live_weight.py", "description": "讀取即時磅重"}
   ]
 }
