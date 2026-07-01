@@ -79,3 +79,27 @@ export async function listWeighings(): Promise<WeighingRow[]> {
   out.sort((a, b) => (b.at || "").localeCompare(a.at || "")); // 新到舊
   return out;
 }
+
+export interface LiveWeight {
+  weight: number | null;
+  state: string;
+  at: string | null;
+  server_at: string | null;
+  server_now: string;
+}
+
+export async function getLiveWeight(): Promise<LiveWeight> {
+  return await callAction("get_live_weight", {});
+}
+
+export type BoardState = "offline" | "weighing" | "idle";
+
+// 新鮮度只用伺服器時間(server_now - server_at)。ISO 無時區也沒關係:
+// 兩個時間同格式相減，時區解讀會互相抵銷。
+export function classify(lw: LiveWeight, staleSec = 90): BoardState {
+  if (!lw || !lw.server_at) return "offline";
+  const ageSec = (Date.parse(lw.server_now) - Date.parse(lw.server_at)) / 1000;
+  if (isNaN(ageSec) || ageSec > staleSec) return "offline";
+  if (lw.state === "weighing" && !!lw.weight && lw.weight !== 0) return "weighing";
+  return "idle";
+}

@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { buildActionUrl, unwrapEnvelope, mapRecord } from "./aigoClient";
+import { buildActionUrl, unwrapEnvelope, mapRecord, classify, LiveWeight } from "./aigoClient";
 
 beforeEach(() => {
   (globalThis as any).window = { __API_BASE__: "/api/v1", __APP_ID__: "APP1", __IS_EXTERNAL__: false };
@@ -56,5 +56,29 @@ describe("mapRecord", () => {
       expect(row.customer_name).toBe("");
       expect(row.material_name).toBe("");
     });
+  });
+});
+
+describe("classify", () => {
+  const base: LiveWeight = {
+    weight: 4830, state: "weighing",
+    at: "2026-07-01T14:03:13",
+    server_at: "2026-07-01T14:03:14",
+    server_now: "2026-07-01T14:03:15",
+  };
+  it("新鮮 + 有車 → weighing", () => {
+    expect(classify(base)).toBe("weighing");
+  });
+  it("新鮮 + 重量 0 → idle", () => {
+    expect(classify({ ...base, weight: 0, state: "idle" })).toBe("idle");
+  });
+  it("server_at 為 null → offline", () => {
+    expect(classify({ ...base, server_at: null, weight: null })).toBe("offline");
+  });
+  it("超過 90 秒 → offline", () => {
+    expect(classify({ ...base, server_at: "2026-07-01T14:00:00", server_now: "2026-07-01T14:01:31" })).toBe("offline");
+  });
+  it("剛好 90 秒 → 不算離線(idle/weighing)", () => {
+    expect(classify({ ...base, server_at: "2026-07-01T14:00:00", server_now: "2026-07-01T14:01:30" })).toBe("weighing");
   });
 });
