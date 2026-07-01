@@ -71,3 +71,26 @@ function Resolve-AigoWeighings {
     try { return Get-AigoWeighings $Cfg $script:AigoToken }
     catch { $script:AigoToken = Connect-Aigo $Cfg; return Get-AigoWeighings $Cfg $script:AigoToken }
 }
+
+function Invoke-AigoAction {
+    # 通用:呼叫任一 action,回完整信封 {status, result, error}。
+    param([Parameter(Mandatory)]$Cfg, [Parameter(Mandatory)][string]$Token,
+          [Parameter(Mandatory)][string]$Action, [Parameter(Mandatory)]$Params)
+    $uri = "$($Cfg.aigoBaseUrl)/api/v1/actions/apps/$($Cfg.appId)/run/$Action"
+    $body = @{ params = $Params } | ConvertTo-Json -Compress -Depth 8
+    $bytes = [System.Text.Encoding]::UTF8.GetBytes($body)
+    $resp = Invoke-WebRequest -Method Post -Uri $uri -Headers @{ Authorization = "Bearer $Token" } `
+        -Body $bytes -ContentType 'application/json; charset=utf-8' -UseBasicParsing
+    return ([System.Text.Encoding]::UTF8.GetString($resp.RawContentStream.ToArray()) | ConvertFrom-Json)
+}
+
+function Resolve-AigoAction {
+    # 呼叫 action,token 過期自動重登一次;成功回 .result,失敗丟錯。
+    param([Parameter(Mandatory)]$Cfg, [Parameter(Mandatory)][string]$Action, [Parameter(Mandatory)]$Params)
+    if (-not $script:AigoToken) { $script:AigoToken = Connect-Aigo $Cfg }
+    $envelope = $null
+    try { $envelope = Invoke-AigoAction $Cfg $script:AigoToken $Action $Params }
+    catch { $script:AigoToken = Connect-Aigo $Cfg; $envelope = Invoke-AigoAction $Cfg $script:AigoToken $Action $Params }
+    if ($envelope.status -ne 'success') { throw "$Action 失敗: $($envelope.error)" }
+    return $envelope.result
+}
