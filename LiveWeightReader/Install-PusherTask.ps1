@@ -8,6 +8,9 @@ $cmd = "Invoke-Expression ([IO.File]::ReadAllText('$script'))"
 $action = New-ScheduledTaskAction -Execute 'powershell.exe' `
   -Argument "-NoProfile -WindowStyle Hidden -Command `"$cmd`""
 $trigger = New-ScheduledTaskTrigger -AtLogOn -User $me
+# 看門狗:每 5 分鐘重複、無限期(比照 reader,見 Install-WeightReaderTask.ps1)
+$trigger.Repetition = (New-ScheduledTaskTrigger -Once -At '00:00' `
+  -RepetitionInterval (New-TimeSpan -Minutes 5)).Repetition
 $principal = New-ScheduledTaskPrincipal -UserId $me -LogonType Interactive -RunLevel Limited
 $settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries `
   -StartWhenAvailable -ExecutionTimeLimit ([TimeSpan]::Zero) `
